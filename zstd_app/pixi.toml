@@ -1,0 +1,16 @@
+[package]
+name = "zstd_app"
+version = "0.1.0"
+description = "Demo application using both C++ and Rust zstd wrappers"
+
+[package.build]
+backend = { name = "pixi-build-cmake", version = "*" }
+
+[package.host-dependencies]
+cmake = ">=3.20"
+zstd_wrapper = { path = "../zstd_wrapper" }
+zstd_rs_wrapper = { path = "../zstd_rs_wrapper" }
+
+[package.run-dependencies]
+zstd_wrapper = { path = "../zstd_wrapper" }
+zstd_rs_wrapper = { path = "../zstd_rs_wrapper" }

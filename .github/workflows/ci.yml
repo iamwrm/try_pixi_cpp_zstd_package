@@ -23,3 +23,17 @@ jobs:
 
       - name: Build and Run
         run: pixi run run
+
+      - name: Build Conda Packages
+        run: |
+          pixi build zstd_wrapper
+          pixi build zstd_app
+
+      - name: Upload Conda Packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: conda-packages-${{ matrix.os }}
+          path: |
+            .pixi/output/**/*.conda
+            .pixi/output/**/*.tar.bz2
+          if-no-files-found: warn

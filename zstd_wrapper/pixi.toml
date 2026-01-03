@@ -1,0 +1,14 @@
+[package]
+name = "zstd_wrapper"
+version = "0.1.0"
+description = "Simple C++23 wrapper around zstd compression library"
+
+[package.build]
+backend = { name = "pixi-build-cmake", version = "*" }
+
+[package.host-dependencies]
+cmake = ">=3.20"
+zstd = ">=1.5"
+
+[package.run-dependencies]
+zstd = ">=1.5"

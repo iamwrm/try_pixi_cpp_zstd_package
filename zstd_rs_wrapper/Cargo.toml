@@ -1,0 +1,10 @@
+[package]
+name = "zstd_rs_wrapper"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+zstd = "0.13"
