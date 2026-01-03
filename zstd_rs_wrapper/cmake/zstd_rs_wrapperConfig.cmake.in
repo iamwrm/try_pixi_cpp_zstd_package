@@ -1,0 +1,18 @@
+@PACKAGE_INIT@
+
+# Create imported target for the Rust wrapper library
+if(NOT TARGET zstd_rs_wrapper::zstd_rs_wrapper)
+    add_library(zstd_rs_wrapper::zstd_rs_wrapper STATIC IMPORTED)
+
+    set_target_properties(zstd_rs_wrapper::zstd_rs_wrapper PROPERTIES
+        IMPORTED_LOCATION "${PACKAGE_PREFIX_DIR}/lib/libzstd_rs_wrapper.a"
+        INTERFACE_INCLUDE_DIRECTORIES "${PACKAGE_PREFIX_DIR}/include"
+    )
+
+    # On Windows, link required system libraries
+    if(WIN32)
+        set_property(TARGET zstd_rs_wrapper::zstd_rs_wrapper APPEND PROPERTY
+            INTERFACE_LINK_LIBRARIES ws2_32 ntdll userenv bcrypt
+        )
+    endif()
+endif()

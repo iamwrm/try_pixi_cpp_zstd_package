@@ -1,48 +1,42 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.22)
 project(zstd_rs_wrapper VERSION 0.1.0)
 
 include(GNUInstallDirs)
 
-# Find cargo
-find_program(CARGO cargo REQUIRED)
-
-# Determine the library name based on platform
-if(WIN32)
-    set(RUST_LIB_NAME "zstd_rs_wrapper.lib")
-    set(RUST_DLL_NAME "zstd_rs_wrapper.dll")
-elseif(APPLE)
-    set(RUST_LIB_NAME "libzstd_rs_wrapper.a")
-    set(RUST_DYLIB_NAME "libzstd_rs_wrapper.dylib")
-else()
-    set(RUST_LIB_NAME "libzstd_rs_wrapper.a")
-    set(RUST_DYLIB_NAME "libzstd_rs_wrapper.so")
-endif()
-
-# Build the Rust library
-set(RUST_TARGET_DIR "${CMAKE_CURRENT_BINARY_DIR}/target")
-set(RUST_RELEASE_DIR "${RUST_TARGET_DIR}/release")
-
-add_custom_command(
-    OUTPUT "${RUST_RELEASE_DIR}/${RUST_LIB_NAME}"
-    COMMAND ${CMAKE_COMMAND} -E env "CARGO_TARGET_DIR=${RUST_TARGET_DIR}"
-            ${CARGO} build --release --lib
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Cargo.toml
-            ${CMAKE_CURRENT_SOURCE_DIR}/src/lib.rs
-    COMMENT "Building Rust library"
+# Fetch Corrosion
+include(FetchContent)
+FetchContent_Declare(
+    Corrosion
+    GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
+    GIT_TAG v0.5
 )
+FetchContent_MakeAvailable(Corrosion)
 
-add_custom_target(rust_lib ALL
-    DEPENDS "${RUST_RELEASE_DIR}/${RUST_LIB_NAME}"
-)
+# Import the Rust crate - creates target based on crate name
+corrosion_import_crate(MANIFEST_PATH Cargo.toml)
 
-# Install the static library
-install(FILES "${RUST_RELEASE_DIR}/${RUST_LIB_NAME}"
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RENAME libzstd_rs_wrapper.a
-)
+# Install using Corrosion's install helper
+corrosion_install(TARGETS zstd_rs_wrapper DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-# Install the header
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/zstd_rs_wrapper.h"
+# Install header
+install(FILES include/zstd_rs_wrapper.h
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+# Create and install config files (we create the target in Config.cmake manually)
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/zstd_rs_wrapperConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/zstd_rs_wrapperConfig.cmake"
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/zstd_rs_wrapper
+)
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/zstd_rs_wrapperConfigVersion.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/zstd_rs_wrapperConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/zstd_rs_wrapperConfigVersion.cmake"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/zstd_rs_wrapper
 )

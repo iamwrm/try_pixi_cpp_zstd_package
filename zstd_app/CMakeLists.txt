@@ -12,43 +12,20 @@ find_package(fmt REQUIRED)
 # Find our C++ wrapper library
 find_package(zstd_wrapper REQUIRED)
 
-# Find the Rust wrapper library
-find_library(ZSTD_RS_WRAPPER_LIB
-    NAMES zstd_rs_wrapper
-    REQUIRED
-)
-find_path(ZSTD_RS_WRAPPER_INCLUDE
-    NAMES zstd_rs_wrapper.h
-    REQUIRED
-)
+# Find the Rust wrapper library (now uses CMake package config)
+find_package(zstd_rs_wrapper REQUIRED)
 
 # Create the demo application
 add_executable(zstd_app
     src/main.cpp
 )
 
-target_include_directories(zstd_app
-    PRIVATE
-        ${ZSTD_RS_WRAPPER_INCLUDE}
-)
-
 target_link_libraries(zstd_app
     PRIVATE
         zstd_wrapper::zstd_wrapper
-        ${ZSTD_RS_WRAPPER_LIB}
+        zstd_rs_wrapper::zstd_rs_wrapper
         fmt::fmt
 )
-
-# On Windows, the Rust static library requires linking to system libraries
-if(WIN32)
-    target_link_libraries(zstd_app
-        PRIVATE
-            ws2_32
-            ntdll
-            userenv
-            bcrypt
-    )
-endif()
 
 # Install the executable
 install(TARGETS zstd_app
