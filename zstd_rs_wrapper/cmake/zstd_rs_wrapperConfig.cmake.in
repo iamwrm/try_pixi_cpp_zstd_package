@@ -4,15 +4,24 @@
 if(NOT TARGET zstd_rs_wrapper::zstd_rs_wrapper)
     add_library(zstd_rs_wrapper::zstd_rs_wrapper STATIC IMPORTED)
 
+    # Handle different library names per platform
+    if(WIN32)
+        set(_ZSTD_RS_LIB_NAME "zstd_rs_wrapper.lib")
+    else()
+        set(_ZSTD_RS_LIB_NAME "libzstd_rs_wrapper.a")
+    endif()
+
     set_target_properties(zstd_rs_wrapper::zstd_rs_wrapper PROPERTIES
-        IMPORTED_LOCATION "${PACKAGE_PREFIX_DIR}/lib/libzstd_rs_wrapper.a"
+        IMPORTED_LOCATION "${PACKAGE_PREFIX_DIR}/lib/${_ZSTD_RS_LIB_NAME}"
         INTERFACE_INCLUDE_DIRECTORIES "${PACKAGE_PREFIX_DIR}/include"
     )
 
-    # On Windows, link required system libraries
+    # On Windows, link required system libraries for Rust
     if(WIN32)
         set_property(TARGET zstd_rs_wrapper::zstd_rs_wrapper APPEND PROPERTY
             INTERFACE_LINK_LIBRARIES ws2_32 ntdll userenv bcrypt
         )
     endif()
+
+    unset(_ZSTD_RS_LIB_NAME)
 endif()
