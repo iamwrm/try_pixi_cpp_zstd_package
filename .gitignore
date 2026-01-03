@@ -3,7 +3,6 @@ build/
 
 # Pixi
 .pixi/
-*.lock
 
 # IDE
 .vscode/
