@@ -8,9 +8,11 @@ backend = { name = "pixi-build-cmake", version = "*" }
 
 [package.host-dependencies]
 cmake = ">=3.20"
+fmt = ">=10"
 zstd_wrapper = { path = "../zstd_wrapper" }
 zstd_rs_wrapper = { path = "../zstd_rs_wrapper" }
 
 [package.run-dependencies]
+fmt = ">=10"
 zstd_wrapper = { path = "../zstd_wrapper" }
 zstd_rs_wrapper = { path = "../zstd_rs_wrapper" }

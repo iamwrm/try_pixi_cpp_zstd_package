@@ -1,8 +1,9 @@
 #include <zstd_wrapper/wrapper.hpp>
 #include <zstd_rs_wrapper.h>
 
+#include <fmt/format.h>
+
 #include <cstring>
-#include <format>
 #include <iostream>
 #include <string_view>
 #include <vector>
@@ -72,7 +73,7 @@ int main() {
         "Hello, World! This is a demo of the zstd compression library "
         "with both C++ and Rust implementations.";
 
-    std::cout << std::format("Original text: {} bytes\n\n", original_text.size());
+    std::cout << fmt::format("Original text: {} bytes\n\n", original_text.size());
 
     auto data_span = std::span<const std::byte>(
         reinterpret_cast<const std::byte*>(original_text.data()),
@@ -81,8 +82,8 @@ int main() {
 
     try {
         std::cout << "=== Compression Comparison ===\n";
-        std::cout << std::format("{:<8} {:>10} {:>10} {:>10}\n", "Level", "C++ bytes", "Rust bytes", "Match");
-        std::cout << std::format("{:-<8} {:-<10} {:-<10} {:-<10}\n", "", "", "", "");
+        std::cout << fmt::format("{:<8} {:>10} {:>10} {:>10}\n", "Level", "C++ bytes", "Rust bytes", "Match");
+        std::cout << fmt::format("{:-<8} {:-<10} {:-<10} {:-<10}\n", "", "", "", "");
 
         for (int level : {1, 3, 5, 10, 19}) {
             // C++ compression
@@ -95,7 +96,7 @@ int main() {
             bool match = (cpp_compressed.size() == rust_compressed.size()) &&
                 std::memcmp(cpp_compressed.data(), rust_compressed.data(), cpp_compressed.size()) == 0;
 
-            std::cout << std::format("{:<8} {:>10} {:>10} {:>10}\n",
+            std::cout << fmt::format("{:<8} {:>10} {:>10} {:>10}\n",
                          level, cpp_compressed.size(), rust_compressed.size(),
                          match ? "YES" : "NO");
         }
@@ -113,9 +114,9 @@ int main() {
         bool cpp_to_rust_ok = (rust_from_cpp.size() == original_text.size()) &&
             std::memcmp(rust_from_cpp.data(), original_text.data(), original_text.size()) == 0;
 
-        std::cout << std::format("C++ compress -> C++ decompress: {}\n",
+        std::cout << fmt::format("C++ compress -> C++ decompress: {}\n",
                      cpp_to_cpp_ok ? "SUCCESS" : "FAILED");
-        std::cout << std::format("C++ compress -> Rust decompress: {}\n",
+        std::cout << fmt::format("C++ compress -> Rust decompress: {}\n",
                      cpp_to_rust_ok ? "SUCCESS" : "FAILED");
 
         // Compress with Rust, decompress with both
@@ -129,9 +130,9 @@ int main() {
         bool rust_to_cpp_ok = (cpp_from_rust.size() == original_text.size()) &&
             std::memcmp(cpp_from_rust.data(), original_text.data(), original_text.size()) == 0;
 
-        std::cout << std::format("Rust compress -> Rust decompress: {}\n",
+        std::cout << fmt::format("Rust compress -> Rust decompress: {}\n",
                      rust_to_rust_ok ? "SUCCESS" : "FAILED");
-        std::cout << std::format("Rust compress -> C++ decompress: {}\n",
+        std::cout << fmt::format("Rust compress -> C++ decompress: {}\n",
                      rust_to_cpp_ok ? "SUCCESS" : "FAILED");
 
         std::cout << "\n=== Summary ===\n";
@@ -141,7 +142,7 @@ int main() {
         return 0;
 
     } catch (const std::exception& e) {
-        std::cerr << std::format("Error: {}\n", e.what());
+        std::cerr << fmt::format("Error: {}\n", e.what());
         return 1;
     }
 }

@@ -6,6 +6,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(GNUInstallDirs)
 
+# Find fmt library
+find_package(fmt REQUIRED)
+
 # Find our C++ wrapper library
 find_package(zstd_wrapper REQUIRED)
 
@@ -33,6 +36,7 @@ target_link_libraries(zstd_app
     PRIVATE
         zstd_wrapper::zstd_wrapper
         ${ZSTD_RS_WRAPPER_LIB}
+        fmt::fmt
 )
 
 # Install the executable
