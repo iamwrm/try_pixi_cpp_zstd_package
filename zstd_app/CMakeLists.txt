@@ -39,6 +39,17 @@ target_link_libraries(zstd_app
         fmt::fmt
 )
 
+# On Windows, the Rust static library requires linking to system libraries
+if(WIN32)
+    target_link_libraries(zstd_app
+        PRIVATE
+            ws2_32
+            ntdll
+            userenv
+            bcrypt
+    )
+endif()
+
 # Install the executable
 install(TARGETS zstd_app
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
