@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
@@ -19,21 +20,20 @@ jobs:
       - name: Setup Pixi
         uses: prefix-dev/setup-pixi@v0.9.3
         with:
-          cache: true
+          cache: false
 
       - name: Build and Run
         run: pixi run run
 
       - name: Build Conda Packages
         run: |
-          pixi build zstd_wrapper
-          pixi build zstd_app
+          pixi build --path zstd_wrapper -o .pixi/output
+          pixi build --path zstd_rs_wrapper -o .pixi/output
+          pixi build --path zstd_app -o .pixi/output
 
       - name: Upload Conda Packages
         uses: actions/upload-artifact@v4
         with:
           name: conda-packages-${{ matrix.os }}
-          path: |
-            .pixi/output/**/*.conda
-            .pixi/output/**/*.tar.bz2
+          path: .pixi/output/
           if-no-files-found: warn
