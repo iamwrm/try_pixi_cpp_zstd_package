@@ -1,0 +1,18 @@
+# Build outputs
+build/
+
+# Pixi
+.pixi/
+*.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
